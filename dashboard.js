@@ -1,4 +1,7 @@
 // Dashboard JavaScript
+// Global chart instances storage
+window.dashboardCharts = {};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dashboard
     initializeDashboard();
@@ -136,7 +139,6 @@ function loadWeddingsPage(pageElement) {
                 <div class="stat-content">
                     <h3>1,234</h3>
                     <p>Tổng sự kiện</p>
-                    <span class="stat-change positive">+8.2%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -146,7 +148,6 @@ function loadWeddingsPage(pageElement) {
                 <div class="stat-content">
                     <h3>89</h3>
                     <p>Sự kiện tháng này</p>
-                    <span class="stat-change positive">+12%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -156,7 +157,6 @@ function loadWeddingsPage(pageElement) {
                 <div class="stat-content">
                     <h3>456</h3>
                     <p>Sự kiện hoàn thành</p>
-                    <span class="stat-change positive">+5.3%</span>
                 </div>
             </div>
         </div>
@@ -276,7 +276,6 @@ function loadTemplatesPage(pageElement) {
                 <div class="stat-content">
                     <h3>156</h3>
                     <p>Tổng mẫu thiệp</p>
-                    <span class="stat-change positive">+2.1%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -286,7 +285,6 @@ function loadTemplatesPage(pageElement) {
                 <div class="stat-content">
                     <h3>89</h3>
                     <p>Mẫu VIP</p>
-                    <span class="stat-change positive">+5%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -296,7 +294,6 @@ function loadTemplatesPage(pageElement) {
                 <div class="stat-content">
                     <h3>2,847</h3>
                     <p>Lượt sử dụng</p>
-                    <span class="stat-change positive">+18%</span>
                 </div>
             </div>
         </div>
@@ -430,7 +427,6 @@ function loadPaymentsPage(pageElement) {
                 <div class="stat-content">
                     <h3>₫45.2M</h3>
                     <p>Doanh thu tháng</p>
-                    <span class="stat-change positive">+15.3%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -440,7 +436,6 @@ function loadPaymentsPage(pageElement) {
                 <div class="stat-content">
                     <h3>1,847</h3>
                     <p>Giao dịch</p>
-                    <span class="stat-change positive">+8.7%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -450,7 +445,6 @@ function loadPaymentsPage(pageElement) {
                 <div class="stat-content">
                     <h3>₫24,500</h3>
                     <p>Giá trị TB</p>
-                    <span class="stat-change positive">+3.2%</span>
                 </div>
             </div>
         </div>
@@ -497,32 +491,6 @@ function loadPaymentsPage(pageElement) {
                         <td><strong>₫299,000</strong></td>
                         <td>23/10/2024</td>
                         <td><span class="status status-active">Thành công</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-edit" title="Xem chi tiết">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn-action" style="background: #e0f2fe; color: #0284c7;" title="In hóa đơn">
-                                    <i class="fas fa-print"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><code>#TXN001235</code></td>
-                        <td>
-                            <div class="user-info">
-                                <img src="https://via.placeholder.com/40x40/4f46e5/ffffff?text=LH" alt="User" class="user-avatar">
-                                <div>
-                                    <div class="user-name">Lê Thị Hoa</div>
-                                    <div class="user-role">hoa.le@email.com</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="badge badge-super">SUPER</span></td>
-                        <td><strong>₫599,000</strong></td>
-                        <td>22/10/2024</td>
-                        <td><span class="status" style="background: #fef3c7; color: #d97706;">Đang xử lý</span></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-action btn-edit" title="Xem chi tiết">
@@ -581,7 +549,6 @@ function loadAnalyticsPage(pageElement) {
                 <div class="stat-content">
                     <h3>2,847</h3>
                     <p>Tổng người dùng</p>
-                    <span class="stat-change positive">+12.5%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -591,7 +558,6 @@ function loadAnalyticsPage(pageElement) {
                 <div class="stat-content">
                     <h3>1,234</h3>
                     <p>Sự kiện cưới</p>
-                    <span class="stat-change positive">+8.2%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -601,7 +567,6 @@ function loadAnalyticsPage(pageElement) {
                 <div class="stat-content">
                     <h3>₫45.2M</h3>
                     <p>Doanh thu</p>
-                    <span class="stat-change positive">+15.3%</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -611,7 +576,6 @@ function loadAnalyticsPage(pageElement) {
                 <div class="stat-content">
                     <h3>23.4%</h3>
                     <p>Tỷ lệ chuyển đổi</p>
-                    <span class="stat-change positive">+2.1%</span>
                 </div>
             </div>
         </div>
@@ -888,18 +852,19 @@ function updateSettingsContent(setting) {
     content.innerHTML = contents[setting] || contents.general;
 }
 
+
 // Initialize charts
 function initializeCharts() {
     // User Chart
     const userCtx = document.getElementById('userChart');
     if (userCtx) {
-        new Chart(userCtx, {
+        window.dashboardCharts.userChart = new Chart(userCtx, {
             type: 'line',
             data: {
                 labels: ['T5', 'T6', 'T7', 'T8', 'T9', 'T10'],
                 datasets: [{
                     label: 'Người dùng mới',
-                    data: [120, 190, 300, 500, 200, 300],
+                    data: [0, 0, 0, 0, 25, 24], // T5-T8: 0, T9: 25, T10: 24
                     borderColor: '#ff6b9d',
                     backgroundColor: 'rgba(255, 107, 157, 0.1)',
                     tension: 0.4,
@@ -931,16 +896,16 @@ function initializeCharts() {
         });
     }
 
-    // Revenue Chart
+    // Revenue Chart - Mock data
     const revenueCtx = document.getElementById('revenueChart');
     if (revenueCtx) {
-        new Chart(revenueCtx, {
+        window.dashboardCharts.revenueChart = new Chart(revenueCtx, {
             type: 'doughnut',
             data: {
-                labels: ['FREE', 'VIP', 'SUPER'],
+                labels: ['FREE', 'VIP'],
                 datasets: [{
-                    data: [45, 35, 20],
-                    backgroundColor: ['#e2e8f0', '#fbbf24', '#8b5cf6'],
+                    data: [45, 4], // FREE = 45, VIP = 4
+                    backgroundColor: ['#e2e8f0', '#fbbf24'],
                     borderWidth: 0
                 }]
             },
@@ -962,7 +927,7 @@ function initializeAnalyticsCharts() {
     // Revenue Analytics Chart
     const revenueAnalyticsCtx = document.getElementById('revenueAnalyticsChart');
     if (revenueAnalyticsCtx) {
-        new Chart(revenueAnalyticsCtx, {
+        window.dashboardCharts.revenueAnalyticsChart = new Chart(revenueAnalyticsCtx, {
             type: 'bar',
             data: {
                 labels: ['T5', 'T6', 'T7', 'T8', 'T9', 'T10'],
@@ -1002,13 +967,13 @@ function initializeAnalyticsCharts() {
     // Package Distribution Chart
     const packageCtx = document.getElementById('packageDistributionChart');
     if (packageCtx) {
-        new Chart(packageCtx, {
+        window.dashboardCharts.packageDistributionChart = new Chart(packageCtx, {
             type: 'pie',
             data: {
-                labels: ['FREE', 'VIP', 'SUPER'],
+                labels: ['FREE', 'VIP'],
                 datasets: [{
-                    data: [60, 30, 10],
-                    backgroundColor: ['#64748b', '#f59e0b', '#8b5cf6'],
+                    data: [70, 30],
+                    backgroundColor: ['#64748b', '#f59e0b'],
                     borderWidth: 2,
                     borderColor: '#fff'
                 }]
@@ -1033,46 +998,283 @@ function initializeResponsive() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileOverlay = document.getElementById('mobileOverlay');
 
-    // Sidebar toggle for desktop (original button in sidebar)
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
+    // Check if we're on mobile
+    function isMobile() {
+        return window.innerWidth <= 768;
+    }
+
+    // Function to resize all charts
+    function resizeCharts() {
+        // Use requestAnimationFrame to ensure DOM has updated
+        requestAnimationFrame(() => {
+            let resizedCount = 0;
+            
+            if (window.dashboardCharts) {
+                Object.entries(window.dashboardCharts).forEach(([name, chart]) => {
+                    if (chart && typeof chart.resize === 'function') {
+                        chart.resize();
+                        // Force update to ensure proper rendering
+                        chart.update('none');
+                        resizedCount++;
+                        console.log(`Resized chart: ${name}`);
+                    }
+                });
+            }
+            
+            // Fallback to Chart.instances if available
+            if (window.Chart && Chart.instances) {
+                Object.values(Chart.instances).forEach(chart => {
+                    if (chart && typeof chart.resize === 'function') {
+                        chart.resize();
+                        chart.update('none');
+                        resizedCount++;
+                    }
+                });
+            }
+            
+            console.log(`Total charts resized: ${resizedCount}`);
         });
     }
 
-    // Sidebar toggle for header (new button in header)
-    if (sidebarToggleBtn) {
-        sidebarToggleBtn.addEventListener('click', function() {
+    // Toggle mobile sidebar
+    function toggleMobileSidebar(show) {
+        if (isMobile()) {
+            if (show) {
+                sidebar.classList.add('open');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            } else {
+                sidebar.classList.remove('open');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+                
+                // Resize charts after mobile sidebar close
+                setTimeout(resizeCharts, 100);
+            }
+        }
+    }
+
+    // Toggle desktop sidebar
+    function toggleDesktopSidebar() {
+        if (!isMobile()) {
+            // Temporarily disable transitions to prevent horizontal scroll
+            document.body.style.overflowX = 'hidden';
+            
             sidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('expanded');
-        });
+            
+            // Multiple resize attempts to ensure charts update properly
+            setTimeout(resizeCharts, 10);   // Immediate
+            setTimeout(resizeCharts, 100);  // Early
+            setTimeout(resizeCharts, 350);  // After transition
+            
+            // Re-enable after transition
+            setTimeout(() => {
+                document.body.style.overflowX = 'hidden'; // Keep hidden
+            }, 300);
+        }
     }
+
+    // Sidebar toggle disabled to prevent chart resize issues
+    // Desktop sidebar toggle disabled
+    // if (sidebarToggle) {
+    //     sidebarToggle.addEventListener('click', function(e) {
+    //         e.stopPropagation();
+    //         if (isMobile()) {
+    //             toggleMobileSidebar(false);
+    //         } else {
+    //             toggleDesktopSidebar();
+    //         }
+    //     });
+    // }
+
+    // if (sidebarToggleBtn) {
+    //     sidebarToggleBtn.addEventListener('click', function(e) {
+    //         e.stopPropagation();
+    //         toggleDesktopSidebar();
+    //     });
+    // }
 
     // Mobile menu toggle
     if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isOpen = sidebar.classList.contains('open');
+            toggleMobileSidebar(!isOpen);
+        });
+    }
+
+    // Mobile overlay click to close
+    if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', function() {
+            toggleMobileSidebar(false);
         });
     }
 
     // Close sidebar when clicking outside on mobile
     document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 768) {
-            if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
-                sidebar.classList.remove('open');
+        if (isMobile() && sidebar.classList.contains('open')) {
+            if (!sidebar.contains(e.target) && 
+                !mobileMenuToggle.contains(e.target) && 
+                !mobileOverlay.contains(e.target)) {
+                toggleMobileSidebar(false);
             }
         }
     });
 
     // Handle window resize
     window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
+        // Close mobile sidebar when switching to desktop
+        if (!isMobile()) {
+            toggleMobileSidebar(false);
             sidebar.classList.remove('open');
+        } else {
+            // Reset desktop sidebar state on mobile
+            sidebar.classList.remove('collapsed');
+            mainContent.classList.remove('expanded');
+        }
+        
+        // Recalculate chart sizes on resize
+        setTimeout(resizeCharts, 300);
+    });
+
+    // Touch gestures for mobile
+    let touchStartX = 0;
+    let touchStartY = 0;
+    
+    document.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    });
+    
+    document.addEventListener('touchmove', function(e) {
+        if (!isMobile()) return;
+        
+        const touchEndX = e.touches[0].clientX;
+        const touchEndY = e.touches[0].clientY;
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        
+        // Swipe right to open sidebar (from left edge)
+        if (touchStartX < 20 && deltaX > 50 && Math.abs(deltaY) < 100) {
+            toggleMobileSidebar(true);
+        }
+        
+        // Swipe left to close sidebar
+        if (sidebar.classList.contains('open') && deltaX < -50 && Math.abs(deltaY) < 100) {
+            toggleMobileSidebar(false);
         }
     });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        // ESC key to close mobile sidebar
+        if (e.key === 'Escape' && isMobile() && sidebar.classList.contains('open')) {
+            toggleMobileSidebar(false);
+        }
+    });
+
+    // Initialize responsive tables
+    initializeResponsiveTables();
 }
+
+// Initialize responsive tables
+function initializeResponsiveTables() {
+    const tables = document.querySelectorAll('.data-table');
+    
+    tables.forEach(table => {
+        // Add touch scroll indicators for mobile
+        const container = table.closest('.table-container');
+        if (container) {
+            // Add scroll indicators
+            const scrollIndicator = document.createElement('div');
+            scrollIndicator.className = 'table-scroll-indicator';
+            scrollIndicator.innerHTML = '<i class="fas fa-arrows-alt-h"></i> Vuốt để xem thêm';
+            scrollIndicator.style.cssText = `
+                display: none;
+                text-align: center;
+                padding: 8px;
+                background: #f8fafc;
+                color: #64748b;
+                font-size: 12px;
+                border-top: 1px solid #e2e8f0;
+            `;
+            
+            // Show indicator on mobile
+            function updateScrollIndicator() {
+                if (window.innerWidth <= 768) {
+                    const hasScroll = container.scrollWidth > container.clientWidth;
+                    scrollIndicator.style.display = hasScroll ? 'block' : 'none';
+                    if (hasScroll && !container.contains(scrollIndicator)) {
+                        container.appendChild(scrollIndicator);
+                    }
+                } else {
+                    scrollIndicator.style.display = 'none';
+                }
+            }
+            
+            // Update on load and resize
+            updateScrollIndicator();
+            window.addEventListener('resize', updateScrollIndicator);
+            
+            // Hide indicator when scrolling
+            container.addEventListener('scroll', () => {
+                if (scrollIndicator.style.display === 'block') {
+                    scrollIndicator.style.opacity = '0.5';
+                    clearTimeout(scrollIndicator.timeout);
+                    scrollIndicator.timeout = setTimeout(() => {
+                        scrollIndicator.style.opacity = '1';
+                    }, 1000);
+                }
+            });
+        }
+        
+        // Add mobile-friendly row click handlers
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('click', function(e) {
+                if (window.innerWidth <= 640 && !e.target.closest('.btn-action')) {
+                    // On small screens, highlight the clicked row
+                    rows.forEach(r => r.classList.remove('mobile-selected'));
+                    this.classList.add('mobile-selected');
+                    
+                    // Auto-scroll to show action buttons
+                    const actionButtons = this.querySelector('.action-buttons');
+                    if (actionButtons) {
+                        actionButtons.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'nearest',
+                            inline: 'end'
+                        });
+                    }
+                }
+            });
+        });
+    });
+}
+
+// Add mobile-selected row styles
+const mobileRowStyles = document.createElement('style');
+mobileRowStyles.textContent = `
+    @media (max-width: 640px) {
+        .data-table tr.mobile-selected {
+            background-color: #fef3c7 !important;
+            border-left: 3px solid #f59e0b;
+        }
+        
+        .table-scroll-indicator {
+            animation: fadeInOut 2s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+    }
+`;
+document.head.appendChild(mobileRowStyles);
 
 // Search functionality
 function handleSearch(e) {
